@@ -49,7 +49,8 @@
   //Luego de seleccionarlos se establecen todos los lins directos entre esos dos recursos.
   function  almArr(json){
       var articsArr = json.results.bindings;
-      //Almacena en una array todos los URIS
+      console.log(json)
+   /*    //Almacena en una array todos los URIS
       for(i in articsArr){
         arrayURIS[i] = articsArr[i].cr1URI.value
       }    
@@ -67,7 +68,7 @@
                       "}"
       var endpoint = d3.select("#endpoint").property("value") 
       d3sparql.query(endpoint,sparqlRec,almValues)
-     }  
+     }   */
       }
 
       //En esta función se realiza el cálculo del ranking.
