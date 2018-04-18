@@ -6,7 +6,7 @@
     <script src="lib/d3/d3.v3.min.js"></script>
     <script src="d3sparql.js"></script>
     <script>
-      var arrayURIS = new Array();
+      var arrayURIS = new Array(); //Array global para los recursos
       var arrayValores = [];
       var ranks;
       var prefixs = "PREFIX id:   <http://acm.rkbexplorer.com/id/>"+
@@ -37,8 +37,9 @@
       function recom(){
         var sparql = prefixs + "SELECT DISTINCT ?cr1URI ?titulo WHERE {"+
                           "?cr1URI ?link <http://acm.rkbexplorer.com/id/100233>."+
-                           "?cr1URI akt:has-title  ?titulo."+
-                         /* "?cr1URI akt:has-author ?autor"+
+                          "?cr1URI akt:has-title  ?titulo."+
+                /*           "?cr1URI akt:has-author ?autor."+
+                          "?autor akt:full-name ?autorTit."+ 
                           "?cr1URI akt:addresses-generic-area-of-interest ?area"+ */
                           "}"
         var endpoint = d3.select("#endpoint").property("value")
@@ -48,10 +49,10 @@
   //Luego de seleccionarlos se establecen todos los lins directos entre esos dos recursos.
   function  almArr(json){
       var articsArr = json.results.bindings;
-      console.log(json)
-   /*    //Almacena en una array todos los URIS
+      //Almacena en una array todos los URIS
       for(i in articsArr){
-        arrayURIS[i] = articsArr[i].cr1URI.value
+        arrayURIS[i] = {URI:articsArr[i].cr1URI.value,
+                        titulo:articsArr[i].titulo.value}
       }    
       var sparqlRec; 
       var i;
@@ -63,11 +64,11 @@
                       "SELECT ?links WHERE{"+
                       //"{ <http://acm.rkbexplorer.com/id/100233> ?links " + "<" +arrURI[i] + ">.}"+
                       //"UNION"+
-                      "{<"+arrayURIS[i]+">" + " ?links <http://acm.rkbexplorer.com/id/100233>.}"+ 
+                      "{<"+arrayURIS[i].URI+">" + " ?links <http://acm.rkbexplorer.com/id/100233>.}"+ 
                       "}"
       var endpoint = d3.select("#endpoint").property("value") 
       d3sparql.query(endpoint,sparqlRec,almValues)
-     }   */
+     }  
       }
 
       //En esta función se realiza el cálculo del ranking.
@@ -92,7 +93,7 @@
         //Solo es para comprobar.
         var text
         for(i in arroBJ){
-          text += "<br>" + arroBJ[i].Valor + " ---> " + arroBJ[i].URI;
+          text += "<br>" + arroBJ[i].Valor + " ---> " + arroBJ[i].URI.titulo + " --------> " + arroBJ[i].URI.URI;
           }
             document.getElementById("result").innerHTML = text
     }
