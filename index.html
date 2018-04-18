@@ -16,29 +16,25 @@
                       "PREFIX owl:  <http://www.w3.org/2002/07/owl#>"+
                       "PREFIX akt:  <http://www.aktors.org/ontology/portal#>"+
                       "PREFIX akts: <http://www.aktors.org/ontology/support#>"
-    function exec() {
+   
+   //Funcion que se ejecuta con el boton query
+    function exec() { 
       var endpoint = d3.select("#endpoint").property("value")
       var sparql = d3.select("#sparql").property("value")
       d3sparql.query(endpoint, sparql, render)
     }
+
+    //Funcion que pasa el json a la Tabla
     function render(json) {
       var config = {
         "selector": "#result"
       }
       d3sparql.htmltable(json, config)
   }
+
+  //Funcion Recomendadora. 
+  //Extrae todos los recursos candidatos de una URI.
       function recom(){
-    /*var sparql ="PREFIX id:   <http://acm.rkbexplorer.com/id/>"+
-                      "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>"+
-                      "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"+
-                      "PREFIX akt:  <http://www.aktors.org/ontology/portal#>"+
-                      "PREFIX owl:  <http://www.w3.org/2002/07/owl#>"+
-                      "PREFIX akt:  <http://www.aktors.org/ontology/portal#>"+
-                      "PREFIX akts: <http://www.aktors.org/ontology/support#>"+ 
-                      "SELECT ?cRURI WHERE "+ 
-                      "{"+
-                      "?cRURI akt:addresses-generic-area-of-interest <http://acm.rkbexplorer.com/ontologies/acm#B.3.3>." +
-                      "}";*/
         var sparql = prefixs + "SELECT ?cr1URI WHERE {"+
                           "{?cr1URI ?link <http://acm.rkbexplorer.com/id/100233>.}"+
                           //"{?cr1URI akt:has-title  ?titulo.}"+ 
@@ -46,16 +42,19 @@
         var endpoint = d3.select("#endpoint").property("value")
          d3sparql.query(endpoint, sparql,almArr)
   }
-
-
-  
+  //Funcion que alamacena en un array los candidatos de la anterior funcion.
+  //Luego de seleccionarlos se establecen todos los lins directos entre esos dos recursos.
   function  almArr(json){
       var articsArr = json.results.bindings;
+      //Almacena en una array todos los URIS
       for(i in articsArr){
         arrayURIS[i] = articsArr[i].cr1URI.value
       }    
       var sparqlRec; 
       var i;
+
+      //Buscamos todos los links relacionados con ese recurso y los recursos
+      //almacenados anteriormente.
       for(i=0 ; i<arrayURIS.length ; i++){ 
         sparqlRec= prefixs + 
                       "SELECT ?links WHERE{"+
@@ -68,22 +67,26 @@
      }  
       }
 
+      //En esta función se realiza el cálculo del ranking.
   function almValues(json){
     console.log(json)
     var uris = json.results.bindings;
-    arrayValores.push(1/(1+uris.length)); 
+    arrayValores.push(1/(1+uris.length)); //De acuerdo a la longitud del array se hace el calculo.
+                                          // y se lo almacena en un array.
     var obj 
     var arroBJ = []
     if(arrayValores.length == arrayURIS.length){
       for(i in arrayValores){
        obj = {Valor:(Math.round(arrayValores[i]*100))/100, URI:arrayURIS[i]} 
-        arroBJ[i] = obj
+        arroBJ[i] = obj  //Se almacena en un array los objs.
       }
-      arroBJ.sort(
+      arroBJ.sort(  //Se ordena de menor a mayor
         function(a, b){        
           return a.Valor - b.Valor        
         }        
         );
+
+        //Solo es para comprobar.
         var text
         for(i in arroBJ){
           text += "<br>" + arroBJ[i].Valor + " ---> " + arroBJ[i].URI;
