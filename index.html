@@ -35,12 +35,11 @@
   //Funcion Recomendadora. 
   //Extrae todos los recursos candidatos de una URI.
       function recom(){
-        var sparql = prefixs + "SELECT ?cr1URI ?titulo ?autor ?area WHERE {"+
+        var sparql = prefixs + "SELECT DISTINCT ?cr1URI ?titulo WHERE {"+
                           "?cr1URI ?link <http://acm.rkbexplorer.com/id/100233>."+
-                          "?cr1URI akt:has-title  ?titulo."+
-                          "?cr1URI akt:has-author ?autor"+
-                          "?cr1URI ?akt:addresses-generic-area-of-interest ?area"
-
+                           "?cr1URI akt:has-title  ?titulo."+
+                         /* "?cr1URI akt:has-author ?autor"+
+                          "?cr1URI akt:addresses-generic-area-of-interest ?area"+ */
                           "}"
         var endpoint = d3.select("#endpoint").property("value")
          d3sparql.query(endpoint, sparql,almArr)
